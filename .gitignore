@@ -13,3 +13,17 @@
 
 # Dependency directories (remove the comment below to include it)
 # vendor/
+*.aux
+main
+
+ejercicios6
+guia6.md
+
+# LaTeX
+*.fdb_latexmk
+*.fls
+*.log
+*.pdf
+*.tex
+*.gz
+*.synctex
