@@ -152,7 +152,7 @@ func (r *renderer) RenderNode(w io.Writer, node *blackfriday.Node, entering bool
 			if node.HeadingID != "" {
 				_, exist := r.labelIDs[node.HeadingID]
 				if exist {
-					panic("label repeated: " + node.HeadingID)
+					panic("repeated HeadingID: " + node.HeadingID)
 				}
 				r.labelIDs[node.HeadingID] = 1
 				fmt.Fprintf(w, "\\label{%s}\n", node.HeadingID)

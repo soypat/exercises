@@ -18,9 +18,10 @@
 *.aux
 main
 
-ejercicios6
+# Markdown files.
 *.md
 !md2latex/testdata/golden.md
+!testdata/guia6/header.md
 
 # LaTeX
 *.fdb_latexmk
