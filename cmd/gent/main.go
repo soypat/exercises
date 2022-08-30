@@ -1,14 +1,13 @@
 package main
 
 import (
-	"errors"
 	"flag"
 	"fmt"
 	"log"
 	"os"
-	"sort"
-	"strconv"
-	"strings"
+	"path/filepath"
+
+	"github.com/soypat/exercises"
 )
 
 func main() {
@@ -39,70 +38,68 @@ func main() {
 }
 
 func list(dir string) {
-	exercises, err := parseDirExercises(dir)
+	exes, err := exercises.ParseDir(dir)
 	if err != nil {
 		log.Fatal(err)
 	}
-	sort.Sort(byNumber(exercises))
-	for i, ex := range exercises {
-		fmt.Printf("%d:\t%v\n", i, ex.filename())
+	for i, ex := range exes {
+		fmt.Printf("%d:\t%v\n", i, ex.Path())
 	}
 }
 
 func commandCollapse(dir string) {
-	exercises, err := parseDirExercises(dir)
+	exes, err := exercises.ParseDir(dir)
 	if err != nil {
 		log.Fatal(err)
 	}
-	sort.Sort(byNumber(exercises))
-	for i, ex := range exercises {
+	for i, ex := range exes {
 		expectedNum := i + 1
-		if ex.num == expectedNum {
+		if ex.Num == expectedNum {
 			continue
 		}
-		renamed := e{num: i + 1, name: ex.name}
-		if _, err := os.Stat(renamed.filename()); err == nil {
-			log.Fatalf("can't rename %q to already existing %q", ex.filename(), renamed.filename())
+		renamed := exercises.Filename{Num: i + 1, Name: ex.Name}
+		if _, err := os.Stat(renamed.Path()); err == nil {
+			log.Fatalf("can't rename %q to already existing %q", ex.Path(), renamed.Path())
 		}
-		err := os.Rename(ex.filename(), renamed.filename())
+		err := os.Rename(ex.Path(), renamed.Path())
 		if err != nil {
 			log.Fatal(err)
 		}
-		log.Printf("collapse: renaming %q -> %q\n", ex.filename(), renamed.filename())
+		log.Printf("collapse: renaming %q -> %q\n", ex.Path(), renamed.Path())
 	}
 }
 
 func commandInsert(dir, name string) {
-	newExercise, err := parseExerciseFilename(name)
+	newExercise, err := exercises.ParseFilename(filepath.Join(dir, name))
 	if err != nil {
 		log.Fatal("parsing argument exercise name: ", err)
 	}
-	if _, err := os.Stat(name); err == nil {
+	if _, err := os.Stat(newExercise.Path()); err == nil {
 		log.Fatalf("exercise %s already exists", name)
 	}
-	log.Printf("inserting exercise %q", newExercise.filename())
-	oldExercises, err := parseDirExercises(dir)
+	log.Printf("inserting exercise %q", newExercise.Path())
+	oldExercises, err := exercises.ParseDir(dir)
 	if err != nil {
 		log.Fatal(err)
 	}
 	for i := range oldExercises {
-		if oldExercises[i].name == newExercise.name {
-			log.Fatalf("exercise %q already exists", newExercise.name)
+		if oldExercises[i].Name == newExercise.Name {
+			log.Fatalf("exercise %q already exists", newExercise.Name)
 		}
 	}
 	// Modify old exercise names and add new exercise.
 	for _, exercise := range oldExercises {
-		if exercise.num < newExercise.num {
+		if exercise.Num < newExercise.Num {
 			continue // Look for conflicting exercise.
 		}
-		if exercise.num != newExercise.num {
+		if exercise.Num != newExercise.Num {
 			break // No need to rename exercise, no conflict found.
 		}
-		renamedExercise := e{
-			num:  exercise.num + 1.,
-			name: exercise.name,
+		renamedExercise := exercises.Filename{
+			Num:  exercise.Num + 1.,
+			Name: exercise.Name,
 		}
-		err := os.Rename(exercise.filename(), renamedExercise.filename())
+		err := os.Rename(exercise.Path(), renamedExercise.Path())
 		if err != nil {
 			log.Fatal("")
 		}
@@ -112,69 +109,6 @@ func commandInsert(dir, name string) {
 		log.Fatal(err)
 	}
 	fp.Close()
-}
-
-var excluded = []string{}
-
-func isExcluded(s string) bool {
-	for _, ex := range excluded {
-		if ex == s {
-			return true
-		}
-	}
-	return false
-}
-
-func parseDirExercises(dir string) ([]e, error) {
-	entries, err := os.ReadDir(".")
-	if err != nil {
-		return nil, err
-	}
-	var found []e
-	for _, entry := range entries {
-		filename := entry.Name()
-		if entry.IsDir() || isExcluded(filename) {
-			continue
-		}
-		exercise, err := parseExerciseFilename(filename)
-		if err != nil {
-			return nil, errors.New("parsing existing exercise directory: " + err.Error())
-		}
-		newName := (e).filename(e{num: exercise.num + 1, name: exercise.name})
-		_, err = os.Stat(newName)
-		if err == nil {
-			fmt.Errorf("conflict rename: exercise rename %q already exists", newName)
-		}
-		found = append(found, exercise)
-	}
-	return found, nil
-}
-
-type e struct {
-	num  int
-	name string
-}
-
-func (en e) filename() string {
-	return fmt.Sprintf("%03d-%s", en.num, en.name)
-}
-
-func parseExerciseFilename(filename string) (e, error) {
-	if len(filename) < 8 {
-		return e{}, errors.New(filename + " exercise filename name must be more than 8 characters long")
-	}
-	if !strings.HasSuffix(filename, ".py") {
-		return e{}, errors.New(filename + " is not a python file")
-	}
-	n, err := strconv.Atoi(filename[0:3])
-	if err != nil {
-		return e{}, err
-	}
-	en := e{num: n, name: filename[4:]}
-	if en.filename() != filename {
-		return e{}, fmt.Errorf("generated directory name %q does not match argument name %q", en.filename(), filename)
-	}
-	return en, nil
 }
 
 func usage(msg string) {
@@ -189,9 +123,3 @@ func usage(msg string) {
 		fmt.Fprintf(os.Stderr, "%s\n", msg)
 	}
 }
-
-type byNumber []e
-
-func (a byNumber) Len() int           { return len(a) }
-func (a byNumber) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
-func (a byNumber) Less(i, j int) bool { return a[i].num < a[j].num }
