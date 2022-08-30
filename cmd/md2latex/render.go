@@ -6,10 +6,10 @@ import (
 	"flag"
 	"io"
 	"log"
-	"main/md2latex"
 	"os"
 
 	"github.com/russross/blackfriday/v2"
+	"github.com/soypat/exercises/md2latex"
 )
 
 func main() {
@@ -34,7 +34,7 @@ func run(args []string) error {
 	if err != nil {
 		return err
 	}
-	renderer := &md2latex.Renderer{}
+	renderer := md2latex.NewRenderer(md2latex.RendererParameters{Flags: md2latex.SkipHTML})
 	latex := blackfriday.Run(input, blackfriday.WithRenderer(renderer), blackfriday.WithExtensions(blackfriday.FencedCode))
 	outfp, err := os.Create("output.tex")
 	if err != nil {

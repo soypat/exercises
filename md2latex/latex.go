@@ -1,28 +1,58 @@
 package md2latex
 
 import (
+	_ "embed"
 	"fmt"
 	"io"
 
 	"github.com/russross/blackfriday/v2"
 )
 
-type Flag int
+type Flags int
 
 const (
-	NoFlags Flag = iota
+	NoFlags Flags = iota
 	SkipHTML
 )
 
-var _ blackfriday.Renderer = &Renderer{}
-
-type Renderer struct {
-	Flags         Flag
-	lastOutputLen int
+func NewRenderer(p RendererParameters) blackfriday.Renderer {
+	r := &renderer{
+		RendererParameters: p,
+		labelIDs:           make(map[string]int),
+	}
+	return r
 }
 
-func (r *Renderer) RenderNode(w io.Writer, node *blackfriday.Node, entering bool) blackfriday.WalkStatus {
-	attrs := []string{}
+type renderer struct {
+	RendererParameters
+	lastOutputLen int
+	// Track heading IDs to prevent ID collision in a single generation.
+	labelIDs map[string]int
+}
+
+type RendererParameters struct {
+	// Flags allow customizing this renderer's behavior
+	Flags Flags
+	// Increase heading levels: if the offset is 1, \section (1) becomes \subsection (2) etc.
+	// Negative offset is also valid.
+	// Resulting levels are clipped between 1 and 6.
+	HeadingLevelOffset int
+	// Removes section numbering.
+	NoHeadingNumbering bool
+}
+
+//go:embed header.tex
+var defaultHeader []byte
+
+func (r *renderer) RenderHeader(w io.Writer, ast *blackfriday.Node) {
+	w.Write(defaultHeader)
+}
+
+func (r *renderer) RenderFooter(w io.Writer, ast *blackfriday.Node) {
+	w.Write([]byte("\n\\end{document}\n"))
+}
+
+func (r *renderer) RenderNode(w io.Writer, node *blackfriday.Node, entering bool) blackfriday.WalkStatus {
 	switch node.Type {
 	case blackfriday.Text:
 		if node.Parent.Type == blackfriday.Link {
@@ -54,14 +84,6 @@ func (r *Renderer) RenderNode(w io.Writer, node *blackfriday.Node, entering bool
 		} else {
 			r.out(w, braceEnd)
 		}
-	case blackfriday.HTMLSpan:
-		// Skip HTML Span.
-		break
-		if r.Flags&SkipHTML != 0 {
-			break
-		}
-		escapeLaTeX(w, node.Literal)
-		// r.out(w, node.Literal)
 	case blackfriday.Link:
 		if entering {
 			r.out(w, hrefStart)
@@ -88,224 +110,144 @@ func (r *Renderer) RenderNode(w io.Writer, node *blackfriday.Node, entering bool
 			// to be added and when not.
 			if node.Prev != nil {
 				switch node.Prev.Type {
-				case HTMLBlock, List, Paragraph, Heading, CodeBlock, BlockQuote, HorizontalRule:
+				case blackfriday.HTMLBlock, blackfriday.List, blackfriday.Paragraph, blackfriday.Heading, blackfriday.CodeBlock, blackfriday.BlockQuote, blackfriday.HorizontalRule:
 					r.cr(w)
 				}
 			}
-			if node.Parent.Type == BlockQuote && node.Prev == nil {
+			if node.Parent.Type == blackfriday.BlockQuote && node.Prev == nil {
 				r.cr(w)
 			}
-			r.out(w, pTag)
-		} else {
-			r.out(w, pCloseTag)
-			if !(node.Parent.Type == Item && node.Next == nil) {
+			// r.out(w, pTag)
+		} else if node.Parent.Type != blackfriday.BlockQuote && node.Parent.Type != blackfriday.Item {
+			r.out(w, hardBreak)
+			if !(node.Parent.Type == blackfriday.Item && node.Next == nil) {
 				r.cr(w)
 			}
 		}
 	case blackfriday.BlockQuote:
 		if entering {
 			r.cr(w)
-			r.out(w, blockquoteTag)
+			r.out(w, blockQuoteStart)
 		} else {
-			r.out(w, blockquoteCloseTag)
+			r.out(w, blockQuoteEnd)
 			r.cr(w)
 		}
-	case blackfriday.HTMLBlock:
+	case blackfriday.HTMLBlock, blackfriday.HTMLSpan:
 		if r.Flags&SkipHTML != 0 {
 			break
 		}
-		r.cr(w)
-		r.out(w, node.Literal)
-		r.cr(w)
+		panic("md2latex: HTML rendering not supported")
+
 	case blackfriday.Heading:
-		headingLevel := r.HTMLRendererParameters.HeadingLevelOffset + node.Level
-		openTag, closeTag := headingTagsFromLevel(headingLevel)
 		if entering {
-			if node.IsTitleblock {
-				attrs = append(attrs, `class="title"`)
-			}
-			if node.HeadingID != "" {
-				id := r.ensureUniqueHeadingID(node.HeadingID)
-				if r.HeadingIDPrefix != "" {
-					id = r.HeadingIDPrefix + id
-				}
-				if r.HeadingIDSuffix != "" {
-					id = id + r.HeadingIDSuffix
-				}
-				attrs = append(attrs, fmt.Sprintf(`id="%s"`, id))
-			}
+			headingLevel := r.RendererParameters.HeadingLevelOffset + node.Level
+			start := headingFromLevel(headingLevel, r.NoHeadingNumbering)
 			r.cr(w)
-			r.tag(w, openTag, attrs)
+			r.out(w, start)
+			if headingLevel >= 5 {
+				r.out(w, hardBreak)
+			}
 		} else {
-			r.out(w, closeTag)
-			if !(node.Parent.Type == Item && node.Next == nil) {
+			r.out(w, braceEnd)
+			if node.HeadingID != "" {
+				_, exist := r.labelIDs[node.HeadingID]
+				if exist {
+					panic("label repeated: " + node.HeadingID)
+				}
+				r.labelIDs[node.HeadingID] = 1
+				fmt.Fprintf(w, "\\label{%s}\n", node.HeadingID)
+			}
+			if !(node.Parent.Type == blackfriday.Item && node.Next == nil) {
 				r.cr(w)
 			}
 		}
 	case blackfriday.HorizontalRule:
 		r.cr(w)
-		r.outHRTag(w)
+		r.out(w, hruleCommand)
 		r.cr(w)
 	case blackfriday.List:
-		openTag := ulTag
-		closeTag := ulCloseTag
-		if node.ListFlags&ListTypeOrdered != 0 {
-			openTag = olTag
-			closeTag = olCloseTag
+		opener := ulStart
+		closer := ulEnd
+		if node.ListFlags&blackfriday.ListTypeOrdered != 0 {
+			opener = olStart
+			closer = olEnd
 		}
-		if node.ListFlags&ListTypeDefinition != 0 {
-			openTag = dlTag
-			closeTag = dlCloseTag
+		if node.ListFlags&blackfriday.ListTypeDefinition != 0 {
+			opener = descriptionStart
+			closer = descriptionEnd
 		}
 		if entering {
-			if node.IsFootnotesList {
-				r.out(w, footnotesDivBytes)
-				r.outHRTag(w)
-				r.cr(w)
-			}
 			r.cr(w)
-			if node.Parent.Type == Item && node.Parent.Parent.Tight {
+			if node.Parent.Type == blackfriday.Item && node.Parent.Parent.Tight {
 				r.cr(w)
 			}
-			r.tag(w, openTag[:len(openTag)-1], attrs)
+			r.out(w, opener)
 			r.cr(w)
 		} else {
-			r.out(w, closeTag)
-			//cr(w)
-			//if node.parent.Type != Item {
-			//	cr(w)
-			//}
-			if node.Parent.Type == Item && node.Next != nil {
+			r.out(w, closer)
+			if node.Parent.Type == blackfriday.Item && node.Next != nil {
 				r.cr(w)
 			}
-			if node.Parent.Type == Document || node.Parent.Type == BlockQuote {
+			if node.Parent.Type == blackfriday.Document || node.Parent.Type == blackfriday.BlockQuote {
 				r.cr(w)
-			}
-			if node.IsFootnotesList {
-				r.out(w, footnotesCloseDivBytes)
 			}
 		}
 	case blackfriday.Item:
-		openTag := liTag
-		closeTag := liCloseTag
-		if node.ListFlags&ListTypeDefinition != 0 {
-			openTag = ddTag
-			closeTag = ddCloseTag
-		}
-		if node.ListFlags&ListTypeTerm != 0 {
-			openTag = dtTag
-			closeTag = dtCloseTag
-		}
 		if entering {
-			if itemOpenCR(node) {
-				r.cr(w)
-			}
-			if node.ListData.RefLink != nil {
-				slug := slugify(node.ListData.RefLink)
-				r.out(w, footnoteItem(r.FootnoteAnchorPrefix, slug))
-				break
-			}
-			r.out(w, openTag)
+			r.out(w, itemCommand)
 		} else {
-			if node.ListData.RefLink != nil {
-				slug := slugify(node.ListData.RefLink)
-				if r.Flags&FootnoteReturnLinks != 0 {
-					r.out(w, footnoteReturnLink(r.FootnoteAnchorPrefix, r.FootnoteReturnLinkContents, slug))
-				}
-			}
-			r.out(w, closeTag)
 			r.cr(w)
 		}
 	case blackfriday.CodeBlock:
-		attrs = appendLanguageAttr(attrs, node.Info)
-		r.cr(w)
-		r.out(w, preTag)
-		r.tag(w, codeTag[:len(codeTag)-1], attrs)
-		escapeAllHTML(w, node.Literal)
-		r.out(w, codeCloseTag)
-		r.out(w, preCloseTag)
-		if node.Parent.Type != Item {
+		fmt.Fprintf(w, "\\begin{lstlisting}[language=%s]\n%s\n\\end{lstlisting}", node.Info, string(node.Literal))
+		if node.Parent.Type != blackfriday.Item {
 			r.cr(w)
 		}
 	case blackfriday.Table:
 		if entering {
 			r.cr(w)
-			r.out(w, tableTag)
+			r.out(w, tableStart)
+			r.out(w, []byte("\n% Tables unsupported!\n"))
 		} else {
-			r.out(w, tableCloseTag)
+			r.out(w, tableEnd)
 			r.cr(w)
 		}
-	case blackfriday.TableCell:
-		openTag := tdTag
-		closeTag := tdCloseTag
-		if node.IsHeader {
-			openTag = thTag
-			closeTag = thCloseTag
-		}
-		if entering {
-			align := cellAlignment(node.Align)
-			if align != "" {
-				attrs = append(attrs, fmt.Sprintf(`align="%s"`, align))
-			}
-			if node.Prev == nil {
-				r.cr(w)
-			}
-			r.tag(w, openTag, attrs)
-		} else {
-			r.out(w, closeTag)
-			r.cr(w)
-		}
-	case blackfriday.TableHead:
-		if entering {
-			r.cr(w)
-			r.out(w, theadTag)
-		} else {
-			r.out(w, theadCloseTag)
-			r.cr(w)
-		}
-	case blackfriday.TableBody:
-		if entering {
-			r.cr(w)
-			r.out(w, tbodyTag)
-			// XXX: this is to adhere to a rather silly test. Should fix test.
-			if node.FirstChild == nil {
-				r.cr(w)
-			}
-		} else {
-			r.out(w, tbodyCloseTag)
-			r.cr(w)
-		}
-	case blackfriday.TableRow:
-		if entering {
-			r.cr(w)
-			r.out(w, trTag)
-		} else {
-			r.out(w, trCloseTag)
-			r.cr(w)
-		}
-	// case blackfriday.Math:
-	// 	r.out(w, mathTag)
-	// 	escapeAllHTML(w, node.Literal)
-	// 	r.out(w, mathCloseTag)
 	default:
 		panic("Unknown node type " + node.Type.String())
 	}
 	return blackfriday.GoToNext
 }
 
-func (r *Renderer) cr(w io.Writer) {
+func (r *renderer) cr(w io.Writer) {
 	w.Write(nlByte)
 }
 
-func (r *Renderer) out(w io.Writer, text []byte) {
+func (r *renderer) out(w io.Writer, text []byte) {
 	w.Write(text)
 	r.lastOutputLen = len(text)
 }
 
-func (r *Renderer) RenderHeader(w io.Writer, ast *blackfriday.Node) {
-
+func skipParagraphTags(node *blackfriday.Node) bool {
+	grandparent := node.Parent.Parent
+	if grandparent == nil || grandparent.Type != blackfriday.List {
+		return false
+	}
+	tightOrTerm := grandparent.Tight || node.Parent.ListFlags&blackfriday.ListTypeTerm != 0
+	return grandparent.Type == blackfriday.List && tightOrTerm
 }
 
-func (r *Renderer) RenderFooter(w io.Writer, ast *blackfriday.Node) {
+func headingFromLevel(level int, nonumber bool) []byte {
+	if level < 1 {
+		level = 1
+	} else if level > 6 {
+		level = 6
+	}
+	return headerTable[level-1][bool2int(nonumber)]
+}
 
+func bool2int(b bool) int {
+	if b {
+		return 1
+	}
+	return 0
 }
