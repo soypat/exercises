@@ -3,7 +3,6 @@ Examine la función `convertir_a_float` y el uso de la misma.
 ¿Qué **debería** imprimir el programa cuando es corrido?
 ¿Qué es lo que **realmente** imprime el programa?
 ¿Cómo mejoraría la función `convertir_a_float`?
-
 ```python
 def convertir_a_float(cadena):
     separado = cadena.split(".")

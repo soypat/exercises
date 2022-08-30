@@ -1,7 +1,6 @@
 """
 Dado el siguiente programa corrijalo para que imprima el resultado de la función `simple`.
 Elabore por qué razón falla el programa.
-
 ```python
 resultado = simple()
 print(resultado)
