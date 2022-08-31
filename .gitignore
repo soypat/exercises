@@ -19,9 +19,7 @@
 main
 
 # Markdown files.
-*.md
-!md2latex/testdata/golden.md
-!testdata/guia6/header.md
+*_test.md
 
 # LaTeX
 *.fdb_latexmk
@@ -31,3 +29,4 @@ main
 *.tex
 *.gz
 *.synctex
+*.synctex(busy)

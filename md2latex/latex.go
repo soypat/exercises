@@ -39,13 +39,19 @@ type RendererParameters struct {
 	HeadingLevelOffset int
 	// Removes section numbering.
 	NoHeadingNumbering bool
+	// Replace the default preamble by setting this to a non-nil byte slice.
+	Preamble []byte
 }
 
 //go:embed header.tex
 var defaultHeader []byte
 
 func (r *renderer) RenderHeader(w io.Writer, ast *blackfriday.Node) {
-	w.Write(defaultHeader)
+	if r.Preamble == nil {
+		w.Write(defaultHeader)
+	} else {
+		w.Write(r.Preamble)
+	}
 }
 
 func (r *renderer) RenderFooter(w io.Writer, ast *blackfriday.Node) {

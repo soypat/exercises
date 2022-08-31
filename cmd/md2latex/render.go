@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"errors"
 	"flag"
+	"fmt"
 	"io"
 	"log"
 	"os"
@@ -12,7 +13,14 @@ import (
 	"github.com/soypat/exercises/md2latex"
 )
 
+var (
+	usehtml bool
+	print   bool
+)
+
 func main() {
+	flag.BoolVar(&usehtml, "html", false, "output html")
+	flag.BoolVar(&print, "p", false, "Output to stdout.")
 	flag.Parse()
 	args := flag.Args()
 	err := run(args)
@@ -34,13 +42,23 @@ func run(args []string) error {
 	if err != nil {
 		return err
 	}
-	renderer := md2latex.NewRenderer(md2latex.RendererParameters{Flags: md2latex.SkipHTML})
-	latex := blackfriday.Run(input, blackfriday.WithRenderer(renderer), blackfriday.WithExtensions(blackfriday.FencedCode))
+	var renderer blackfriday.Renderer
+	if usehtml {
+		renderer = blackfriday.NewHTMLRenderer(blackfriday.HTMLRendererParameters{})
+	} else {
+		renderer = md2latex.NewRenderer(md2latex.RendererParameters{Flags: md2latex.SkipHTML})
+	}
+
+	output := blackfriday.Run(input, blackfriday.WithRenderer(renderer), blackfriday.WithExtensions(blackfriday.FencedCode))
+	if print {
+		fmt.Println(string(output))
+		return nil
+	}
 	outfp, err := os.Create("output.tex")
 	if err != nil {
 		return err
 	}
 	defer outfp.Close()
-	_, err = io.Copy(outfp, bytes.NewBuffer(latex))
+	_, err = io.Copy(outfp, bytes.NewBuffer(output))
 	return err
 }

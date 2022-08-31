@@ -121,5 +121,5 @@ func ParsePythonExercise(text string) (Exercise, error) {
 	if !ok {
 		return Exercise{}, errors.New("problem docstring not found")
 	}
-	return Exercise{Problem: problem, SolutionCode: solution}, nil
+	return Exercise{Problem: problem, SolutionCode: strings.TrimSpace(solution)}, nil
 }

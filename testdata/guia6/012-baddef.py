@@ -15,4 +15,3 @@ def simple():
 
 resultado = simple()
 print(resultado)
-
