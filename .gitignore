@@ -17,10 +17,10 @@
 # vendor/
 *.aux
 main
-
+*0
 # Markdown files.
 *_test.md
-
+*_test.py
 # LaTeX
 *.fdb_latexmk
 *.fls

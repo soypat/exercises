@@ -67,6 +67,7 @@ func ParseDir(dir string) ([]Filename, error) {
 		path := filepath.Join(dir, filename)
 		exercise, err := ParseFilename(path)
 		if err != nil {
+			continue
 			return nil, errors.New("parsing directory \"" + dir + "\": " + err.Error())
 		}
 		found = append(found, exercise)

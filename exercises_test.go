@@ -35,7 +35,7 @@ func TestGenerateExerciseGuide(t *testing.T) {
 		t.Fatal(err)
 	}
 	defer out.Close()
-	_, err = out.Write(mdHeader)
+	_, err = out.Write(append(mdHeader, '\n'))
 	if err != nil {
 		t.Fatal(err)
 	}
