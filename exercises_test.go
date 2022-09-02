@@ -45,14 +45,14 @@ func TestGenerateExerciseGuide(t *testing.T) {
 	}
 
 	for i, ex := range exercises {
-		fmt.Fprintf(out, "%d. %s\n\n", i, strings.ReplaceAll(ex.Problem, "\n", "\n\t"))
+		fmt.Fprintf(out, "%d. %s\n\n", i+1, strings.ReplaceAll(ex.Problem, "\n", "\n\t"))
 	}
 
-	fmt.Fprintln(out, "# Solucionario (pares)")
+	fmt.Fprintln(out, "# Solucionario")
 
 	for i, ex := range exercises {
 		if i%2 == 1 || true {
-			fmt.Fprintf(out, "#### Solución al %d.\n```python\n%s\n```\n\n", i, ex.SolutionCode)
+			fmt.Fprintf(out, "### Posible solución al %d.\n\n```python\n%s\n```\n\n", i+1, ex.SolutionCode)
 		}
 	}
 }

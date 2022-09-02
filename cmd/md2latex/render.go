@@ -16,11 +16,13 @@ import (
 var (
 	usehtml bool
 	print   bool
+	unhead  bool
 )
 
 func main() {
 	flag.BoolVar(&usehtml, "html", false, "output html")
 	flag.BoolVar(&print, "p", false, "Output to stdout.")
+	flag.BoolVar(&unhead, "unhead", false, "No heading numbering")
 	flag.Parse()
 	args := flag.Args()
 	err := run(args)
@@ -42,14 +44,18 @@ func run(args []string) error {
 	if err != nil {
 		return err
 	}
+	params := md2latex.RendererParameters{
+		Flags:              md2latex.SkipHTML,
+		NoHeadingNumbering: unhead,
+	}
 	var renderer blackfriday.Renderer
 	if usehtml {
 		renderer = blackfriday.NewHTMLRenderer(blackfriday.HTMLRendererParameters{})
 	} else {
-		renderer = md2latex.NewRenderer(md2latex.RendererParameters{Flags: md2latex.SkipHTML})
+		renderer = md2latex.NewRenderer(params)
 	}
 
-	output := blackfriday.Run(input, blackfriday.WithRenderer(renderer), blackfriday.WithExtensions(blackfriday.FencedCode))
+	output := blackfriday.Run(input, blackfriday.WithNoExtensions(), blackfriday.WithRenderer(renderer), blackfriday.WithExtensions(blackfriday.FencedCode))
 	if print {
 		fmt.Println(string(output))
 		return nil

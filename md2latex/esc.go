@@ -26,7 +26,9 @@ var (
 	itemCommand      = []byte("\\item~")
 	tableStart       = []byte("\\begin{table}")
 	tableEnd         = []byte("\\end{table}")
-	headerTable      = [6][2][]byte{
+	headingTable     = [6][2][]byte{
+		// {[]byte("\\part{"), []byte("\\part*{")},
+		// {[]byte("\\chapter{"), []byte("\\chapter*{")},
 		{[]byte("\\section{"), []byte("\\section*{")},
 		{[]byte("\\subsection{"), []byte("\\subsection*{")},
 		{[]byte("\\subsubsection{"), []byte("\\subsubsection*{")},

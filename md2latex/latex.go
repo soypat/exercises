@@ -151,7 +151,7 @@ func (r *renderer) RenderNode(w io.Writer, node *blackfriday.Node, entering bool
 			r.cr(w)
 			r.out(w, start)
 			if headingLevel >= 5 {
-				r.out(w, hardBreak)
+				r.cr(w)
 			}
 		} else {
 			r.out(w, braceEnd)
@@ -205,7 +205,8 @@ func (r *renderer) RenderNode(w io.Writer, node *blackfriday.Node, entering bool
 			r.cr(w)
 		}
 	case blackfriday.CodeBlock:
-		fmt.Fprintf(w, "\\begin{lstlisting}[language=%s]\n%s\n\\end{lstlisting}", node.Info, string(node.Literal))
+		// r.out(w, parBreak)
+		fmt.Fprintf(w, "\n%%s\n\\begin{lstlisting}[language=%s]\n%s\n\\end{lstlisting}", node.Info, string(node.Literal))
 		if node.Parent.Type != blackfriday.Item {
 			r.cr(w)
 		}
@@ -248,7 +249,7 @@ func headingFromLevel(level int, nonumber bool) []byte {
 	} else if level > 6 {
 		level = 6
 	}
-	return headerTable[level-1][bool2int(nonumber)]
+	return headingTable[level-1][bool2int(nonumber)]
 }
 
 func bool2int(b bool) int {
