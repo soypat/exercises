@@ -2,12 +2,12 @@
 ★★★ *Divide y conquistarás*. Llegó el fin de los tiempos. La sociedad ha colapsado y lo único que ha quedado
 a tu nombre es una lista de todos los temas que has escuchado en spotify. Planeas
 pasar el resto de tus días buscando vinílos de tus temas preferidos entre los escombros
-para luego escucharlos una vez llegada la noche para sentirte acompañada/o.
+para luego escucharlos una vez llegada la noche para sentirte acompañada/o.  
 
-Sin embargo, la lista de temas es infinita.
+Sin embargo, la lista de temas es infinita.  
 
 Sería imposible recorrerla a ojo en un tiempo razonable. Por suerte sabes Python
-por cursar IPC en esa universidad... como era el nombre? UdeSI... o algo asi.
+por cursar IPC en esa universidad... como era el nombre? UdeSI... o algo asi.  
 
 Querés empezar buscando los temas que más escuchaste durante tu vida, pero no querés
 buscar temas de corta duración. Mucho más te va rendir un tema largo y tendido que

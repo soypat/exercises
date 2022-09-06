@@ -48,7 +48,10 @@ func TestGenerateExerciseGuide(t *testing.T) {
 		t.Fatal(err)
 	}
 	for i, ex := range exercises {
-		fmt.Fprintf(markdown, "%d. %s\n\n", i+1, strings.ReplaceAll(ex.Problem, "\n", "\n\t"))
+		problem := strings.ReplaceAll(ex.Problem, "\n", "\n\t")
+		problem = strings.ReplaceAll(problem, "  \n\n", "  \n")
+		// fmt.Fprintf(markdown, "%d. %s\n\n", i+1, ex.Problem)
+		fmt.Fprintf(markdown, "%d. %s\n\n", i+1, problem)
 	}
 	fmt.Fprintln(markdown, "# Solucionario")
 	for i, ex := range exercises {
@@ -93,6 +96,7 @@ func TestGenerateExerciseGuide(t *testing.T) {
 	// Save latex contents, straight from the buffer.
 	const latexFilename = "testdata/guia6_test.tex"
 	os.Remove("testdata/guia6_test.pdf")
+	os.Remove("guia6_test.pdf")
 	ltxOut, err := os.Create(latexFilename)
 	if err != nil {
 		t.Fatal(err)
