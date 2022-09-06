@@ -108,19 +108,19 @@ func ParsePythonExercise(text string) (Exercise, error) {
 		return Exercise{}, errors.New("too short exercise")
 	}
 
-	const docstringSep = "\n\"\"\"\n"
+	const docstringSep = "\n'''\n"
 	var afterDesc string
-	if text[:4] == "\"\"\"\n" {
+	if text[:4] == "'''\n" {
 		afterDesc = text[4:]
 	} else {
 		_, afterDesc, _ = strings.Cut(text, docstringSep)
 	}
 	if afterDesc == "" {
-		return Exercise{}, errors.New("no description found")
+		return Exercise{}, errors.New("no description found within ''' docstring")
 	}
 	problem, solution, ok := strings.Cut(afterDesc, docstringSep)
 	if !ok {
-		return Exercise{}, errors.New("problem docstring not found")
+		return Exercise{}, errors.New("problem docstring (''') not found")
 	}
 	return Exercise{Problem: problem, SolutionCode: strings.TrimSpace(solution)}, nil
 }

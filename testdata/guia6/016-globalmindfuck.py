@@ -1,5 +1,5 @@
-"""
-Es importante reconocer la diferencia entre una variable local a una función 
+'''
+★★☆ Es importante reconocer la diferencia entre una variable local a una función 
 y una variable global.
 
 ¿Por qué el siguiente programa resulta en un error?
@@ -12,7 +12,7 @@ def imprimir_frutas():
 
 imprimir_frutas()
 ```
-"""
+'''
 # La función `imprimir_frutas` tiene dos lineas.
 # Cómo hemos visto, la segunda línea declara la variable local `frutas`.
 # Sin embargo, hay un uso de la variable local `frutas` antes de que sea declarada

@@ -1,5 +1,5 @@
-"""
-Examine la función `convertir_a_float` y el uso de la misma.
+'''
+★★★ Examine la función `convertir_a_float` y el uso de la misma.
 ¿Qué **debería** imprimir el programa cuando es corrido?
 ¿Qué es lo que **realmente** imprime el programa?
 ¿Cómo mejoraría la función `convertir_a_float`?
@@ -23,7 +23,7 @@ print(a+b+c+d)
 Una vez resuelta el ejercicio: ¿En qué casos sería útil esta función?
 ¿Por qué no querríamos reemplazar la función `convertir_a_float` con `float`?
 
-"""
+'''
 # Con la función incorrecta imprime 2.5
 # "Debería" imprimir la suma de 2.5+2+1+0., `5.5`
 # dado que "no soy float" evalua a 0.0

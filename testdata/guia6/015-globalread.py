@@ -1,5 +1,5 @@
-"""
-Del ejercicio anterior sabemos que podemos crear variables nuevas adentro de
+'''
+★☆☆ Del ejercicio anterior sabemos que podemos crear variables nuevas adentro de
 una función que comparten el mismo nombre con variables globales afuera de la función.
 
 A pesar que las funciones tienen un espacio de trabajo aparte para variables
@@ -12,6 +12,6 @@ def imprimir_frutas():
 
 imprimir_frutas()
 ```
-"""
+'''
 # El código es valido e imprime 99.
 # Las funciones pueden acceder a variables globales.

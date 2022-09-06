@@ -13,5 +13,6 @@
 * Argumentos default
 * Variables locales y globales
 * Docstrings
+* Paradigma **Divide y vencerás**
 
 ## Ejercicios
