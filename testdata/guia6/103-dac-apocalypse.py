@@ -57,6 +57,9 @@ un tema devuelva la cantidad de reproducciones y la duración en segundos. Ejemp
 > print(rep, seg)
 > 2332 41529
 ```
+
+**Puede ser muy útil definir una función `procesar_tema` que procese la cadena de
+un solo tema y validar que funcione bien antes de resolver el problema entero.**
 '''
 def duracion_a_tiempo(cadena_duracion):
     """
@@ -84,17 +87,10 @@ def info(cadena_info:str):
     sep = cadena_info.split(",")
     return int(sep[0]), duracion_a_tiempo(sep[1])
 
-temas = input().split("\n")
-
-# Descomentar las lineas de abajo para probar el programa.
-#temas = """Big Iron - Marty Robbins {4096,3:56}
-#Air Supply - Making Love Out Of Nothing At All {512,5:42}
-#Every Time the Sun Comes Up - Sharon Van Etten {1024,4:23}
-#Don't Look Up - Nicholas Britell {128,52} {456,4:08}""".split("\n")
-
-duracion_minima = duracion_a_tiempo("2:31")
-informaciones = []
-for tema in temas:
+def procesar_tema(tema):
+    """Procesa un tema de la forma 
+    NOMBRE_DE_TEMA_Y_CANTAUTOR/A {INFO(ORIGINAL)} {INFO(BONUS)}
+    """
     bonus_reproducciones, bonus_duracion = 0, 0
     # En base a la posición de las llaves podemos slicear la cadena
     # para dividir el texto en partes de info y título+cantautor/a
@@ -110,16 +106,23 @@ for tema in temas:
         info_bonus_indice = bonus_texto.index("{")
         info_bonus_indice_fin = bonus_texto.index("}")
         bonus_reproducciones, bonus_duracion = info(bonus_texto[info_bonus_indice:info_bonus_indice_fin])
-    
+    return titulo, orig_reproducciones, orig_duracion, bonus_reproducciones, bonus_duracion 
+
+temas = input().split("\n")
+
+duracion_minima = duracion_a_tiempo("2:31")
+informaciones = []
+for tema in temas:
+    titulo, orig_rep, orig_dur, bon_rep, bon_dur = procesar_tema(tema)
     # Nos importa solo la más alta de las dos duraciones.
-    max_duracion = max(bonus_duracion, orig_reproducciones)
+    max_duracion = max(bon_dur, orig_dur)
     # Descartamos el tema si es más corto que el limite.
     if max_duracion < duracion_minima:
         continue
     
     # Acá usamos un trucazo. Si guardamos una tupla en una lista y luego
     # la ordenamos usando sort, sort ordenará según el primer valor de la tupla.
-    info_tupla = (orig_reproducciones+bonus_reproducciones, titulo)
+    info_tupla = (orig_rep+bon_rep, titulo)
     informaciones.append(info_tupla)
 
 informaciones.sort(reverse=True)
