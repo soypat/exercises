@@ -5,7 +5,7 @@ Exercise management for PDF creation
 ## Demo
 Builds "Guia 6 - Funciones" for IPC class @ UdeSA.
 
-Requires [Go 1.19+](https://go.dev/doc/install) to build $\LaTeX$ `testdata/guia6_test.tex` file.
+Requires [Go 1.19+](https://go.dev/doc/install) to build $\LaTeX$ `testdata/guia6_test.md` and `testdata/guia6_test.tex` files.
 
 ```shell
 go test .
