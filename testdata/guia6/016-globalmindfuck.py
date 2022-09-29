@@ -2,7 +2,8 @@
 ★★☆ Es importante reconocer la diferencia entre una variable local a una función 
 y una variable global.
 
-¿Por qué el siguiente programa resulta en un error?
+¿Por qué el siguiente programa resulta en un error?  
+¿Cómo se puede corregir?
 ```python
 frutas = 99
 

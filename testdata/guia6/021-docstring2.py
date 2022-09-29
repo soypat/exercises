@@ -1,6 +1,8 @@
 '''
-★☆☆ Agregue los docstrings apropiados al siguiente programa.
-Ver [mathworld](https://mathworld.wolfram.com/eApproximations.html) para más información.
+★☆☆ Considerando el objetivo o meta que cumpla una función, en ocasiones es necesario
+crear docstrings apropiados para cada caso. Por ejemplo,
+consulte el siguiente enlace [mathworld](https://mathworld.wolfram.com/eApproximations.html)
+y cree los docstrings apropiados para el siguiente programa.
 ```python
 def approx_e():
     exp = 3**(2**85)

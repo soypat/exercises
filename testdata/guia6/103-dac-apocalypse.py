@@ -1,13 +1,13 @@
 '''
-★★★ *Divide y conquistarás*. Llegó el fin de los tiempos. La sociedad ha colapsado y lo único que ha quedado
+★★★ *Divide y vencerás*. Llegó el fin de los tiempos. La sociedad ha colapsado y lo único que ha quedado
 a tu nombre es una lista de todos los temas que has escuchado en spotify. Planeas
 pasar el resto de tus días buscando vinílos de tus temas preferidos entre los escombros
 para luego escucharlos una vez llegada la noche para sentirte acompañada/o.  
 
-Sin embargo, la lista de temas es infinita.  
+Sin embargo, la lista de temas es extremadamente larga.  
 
 Sería imposible recorrerla a ojo en un tiempo razonable. Por suerte sabes Python
-por cursar IPC en esa universidad... como era el nombre? UdeSI... o algo asi.  
+por cursar IPC en esa universidad... cómo era el nombre? UdeSA... o algo asi.  
 
 Querés empezar buscando los temas que más escuchaste durante tu vida, pero no querés
 buscar temas de corta duración. Mucho más te va rendir un tema largo y tendido que
@@ -23,7 +23,7 @@ Don't Look Up - Nicholas Britell {128,52} {456,4:08}
 ```
 Cada línea para cada tema sigue un formato:
 ```plaintext
-NOMBRE_DE_TEMA_Y_CANTAUTOR/A {INFO(ORIGINAL)} {INFO(BONUS)} 
+NOMBRE_DE_TEMA - CANTAUTOR/A {INFO(ORIGINAL)} {INFO(BONUS)} 
 ```
 donde `INFO` tiene la forma `REPRODUCIONES,DURACION`. `DURACION` puede ser la cantidad
 de segundos que dura la cancion, o la duración en `minutos:segundos`, o en raros casos

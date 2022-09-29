@@ -1,8 +1,8 @@
 '''
 ★★★ Examine la función `convertir_a_float` y el uso de la misma.
-¿Qué **debería** imprimir el programa cuando es corrido?
+Considerando el nombre de la función ¿Qué **debería** imprimir el programa cuando se ejecute?
 ¿Qué es lo que **realmente** imprime el programa?
-¿Cómo mejoraría la función `convertir_a_float`?
+Cambie la función `convertir_a_float` para que haga lo esperado según el nombre.
 ```python
 def convertir_a_float(cadena):
     separado = cadena.split(".")

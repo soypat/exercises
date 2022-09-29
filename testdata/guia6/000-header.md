@@ -16,3 +16,8 @@
 * Paradigma **Divide y vencerás**
 
 ## Ejercicios
+
+Nota: Para todos los ejercicios donde se solicite que una función devuelva uno o varios valores, debe incluir 
+en su solución llamar a esa función con los argumentos necesarios, y poder usar los valores de retorno, por ejemplo 
+usando algún print.
+

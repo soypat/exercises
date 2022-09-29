@@ -1,12 +1,13 @@
 '''
 ★☆☆ A continuación se tiene una función con un **docstring**. Los docstrings ayudan
-a documentar lo que hace una función y muestran cuando se llama help.
+a documentar lo que hace una función, esta documentación se muestra cuando se usa la función help.
 ```python
 def suma(a, b):
     """Devuelve la suma de a y b."""
     return a + b
 ```
-Reescriba la función asi el docstring ocupa multiples líneas según [PEP-257](https://peps.python.org/pep-0257/).
+Reescriba la función para que el docstring ocupe múltiples líneas  
+(Ayuda: consulte [peps] https://peps.python.org/pep-0257/).
 '''
 # Dos resultados válidos:
 def suma(a, b):

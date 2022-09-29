@@ -4,8 +4,10 @@
 debería imprimir `Bienvenida/o de vuelta, Usuaria/o`.
 Ejemplo:
 ```python
-> greet_user("esteban")
-> Bienvenida/o de vuelta, esteban
+> greet_user("Esteban")
+> Bienvenida/o de vuelta, Esteban
+> greet_user()
+> Bienvenida/o de vuelta, Usuaria/o
 ```
 '''
 def greet_user(username="Usuaria/o"):

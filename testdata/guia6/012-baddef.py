@@ -1,6 +1,6 @@
 '''
-★☆☆ Dado el siguiente programa corrijalo para que imprima el resultado de la función `simple`.
-Elabore por qué razón falla el programa.
+★☆☆ Dado el siguiente programa modifíquelo para que imprima el resultado de la función `simple`.
+Explique porqué razón falla el programa tal como se presenta.
 ```python
 resultado = simple()
 print(resultado)

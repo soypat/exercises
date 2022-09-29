@@ -1,11 +1,11 @@
 '''
-★★★ *Divide y conquistarás*. "Chaos es caos en inglés" te diría Dr. Chaos,
+★★★ *Divide y vencerás*. "Chaos es caos en inglés" te diría Dr. Chaos,
 charlando con una taza de té Chai en la mano. 
-En verdad no es tán malo como su nombre lo hace aparentar...
+En verdad no es tan malo como su nombre lo hace aparentar...
 si es que tenés un buen manejo de la semiótica.
 
 Dr. Chaos ha descubierto un proceso para [transmogrificar](https://www.merriam-webster.com/dictionary/transmogrify#:~:text=Definition%20of%20transmogrify,with%20grotesque%20or%20humorous%20effect)
-palabras. El doctor asegura que el proceso no altera como los humanos
+palabras. El doctor asegura que el proceso no altera cómo los humanos
 perciben la palabra y que podría usarse para innumerables aplicaciones cientificas.
 En este momento tu solo quieres escribir el programa que implemente
 este transmogrificador asi te deja en paz de una vez y por todas.
