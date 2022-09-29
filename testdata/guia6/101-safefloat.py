@@ -1,6 +1,7 @@
 '''
 ★★★ Examine la función `convertir_a_float` y el uso de la misma.
-Considerando el nombre de la función ¿Qué **debería** imprimir el programa cuando se ejecute?
+Considerando el nombre de la función y sin copiar y pegar en su editor, piense, 
+¿Qué **debería** imprimir el programa cuando se ejecute?
 ¿Qué es lo que **realmente** imprime el programa?
 Cambie la función `convertir_a_float` para que haga lo esperado según el nombre.
 ```python

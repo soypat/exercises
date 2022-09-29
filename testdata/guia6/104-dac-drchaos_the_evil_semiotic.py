@@ -16,7 +16,7 @@ Al rato comienza a sonar *"Todo un palo"* a traves de la pared.
 Te dices a ti mismo "pues claro, ricotero tenía que ser" mientras
 comienzas a escribir las primeras líneas del programa.
 
-#### Fax borroso del Dr. Chaos, el malevolo semiótico
+### Fax borroso del Dr. Chaos, el malevolo semiótico
 ```
 PRIMER PASO: REDUCIR RUIDO 
 1. Ruido se considera agrupaciones de caractéres inecesarias.
@@ -45,8 +45,7 @@ Estas letras deben quedar en mayusculas en el resultado final.
 2. Las vocales del castellano deben ser enfáticas. La H también.
 ```
 
-#### Sugerencia
-Se sugiere usar **funciones**.
+**Sugerencia:** Se sugiere usar **funciones**.
 '''
 def transmogrificar(cadena):
     pass # La solución es dejada como ejercicio para el alumno.

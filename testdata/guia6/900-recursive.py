@@ -1,5 +1,5 @@
 '''
-★★★★ ¿Qué imprime el siguiente programa?
+★★★★ Sin copiarlo y pegarlo en su editor de código, piense, ¿Qué imprime el siguiente programa?
 ```python
 def anidar_parentesis(cadena, n):
     if n <= 0: # Condición de finalización.

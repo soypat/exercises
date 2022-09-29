@@ -53,7 +53,7 @@ func TestGenerateExerciseGuide(t *testing.T) {
 		// fmt.Fprintf(markdown, "%d. %s\n\n", i+1, ex.Problem)
 		fmt.Fprintf(markdown, "%d. %s\n\n", i+1, problem)
 	}
-	fmt.Fprintln(markdown, "# Solucionario")
+	fmt.Fprintln(markdown, "# Solucionario\nDisclaimer: La correctitud de las soluciónes no es garantizada.")
 	for i, ex := range exercises {
 		if i%2 == 1 || true {
 			fmt.Fprintf(markdown, "### Posible solución al %d.\n\n```python\n%s\n```\n\n", i+1, ex.SolutionCode)

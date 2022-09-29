@@ -1,5 +1,5 @@
 '''
-★★★★ ¿Que imprime el siguiente programa?
+★★★★ Sin copiarlo y pegarlo en su editor de código, piense, ¿Qué imprime el siguiente programa?
 ```python
 def hola(uno, dos):
     print("hola",uno, dos)
