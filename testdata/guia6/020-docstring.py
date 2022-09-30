@@ -7,7 +7,7 @@ def suma(a, b):
     return a + b
 ```
 Reescriba la función para que el docstring ocupe múltiples líneas  
-(Ayuda: consulte [peps] https://peps.python.org/pep-0257/).
+(Ayuda: consulte [PEP 257](https://peps.python.org/pep-0257/).
 '''
 # Dos resultados válidos:
 def suma(a, b):
