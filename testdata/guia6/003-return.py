@@ -3,4 +3,5 @@
 un número entero y devuelva ese número.
 '''
 def get_number():
-    return 19312948147891289378912
+    num = input("ingrese un número entero: ")
+    return num
