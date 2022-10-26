@@ -8,7 +8,7 @@ locales, no todo es tan "local". ¿Qué imprime el siguiente código? ¿Es váli
 frutas = 99
 
 def imprimir_frutas():
-    print(f"Tengo {} frutas!", frutas)
+    print(f"Tengo {frutas} frutas!")
 
 imprimir_frutas()
 ```

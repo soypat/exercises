@@ -11,4 +11,4 @@ Ejemplo:
 ```
 '''
 def greet_user(username="Usuaria/o"):
-    print("Bienvenida/o de vuelta, {}".format(username))
+    print(f"Bienvenida/o de vuelta, {username}")

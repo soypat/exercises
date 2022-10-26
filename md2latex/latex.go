@@ -6,6 +6,7 @@ import (
 	"io"
 
 	"github.com/russross/blackfriday/v2"
+	latex "github.com/soypat/goldmark-latex"
 )
 
 type Flags int
@@ -43,8 +44,7 @@ type RendererParameters struct {
 	Preamble []byte
 }
 
-//go:embed header.tex
-var defaultHeader []byte
+var defaultHeader = latex.DefaultPreamble()
 
 func (r *renderer) RenderHeader(w io.Writer, ast *blackfriday.Node) {
 	if r.Preamble == nil {
@@ -52,6 +52,7 @@ func (r *renderer) RenderHeader(w io.Writer, ast *blackfriday.Node) {
 	} else {
 		w.Write(r.Preamble)
 	}
+	w.Write([]byte("\n\\begin{document}\n"))
 }
 
 func (r *renderer) RenderFooter(w io.Writer, ast *blackfriday.Node) {

@@ -8,7 +8,7 @@ y una variable global.
 frutas = 99
 
 def imprimir_frutas():
-    print(f"Tengo", frutas, "frutas!")
+    print("Tengo", frutas, "frutas!")
     frutas = 0
 
 imprimir_frutas()
